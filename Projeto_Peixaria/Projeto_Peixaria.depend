@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1679973001 source:c:\users\lucas batista\desktop\projeto_peixaria\main.c
+	"funcoes.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1679973588 c:\users\lucas batista\desktop\projeto_peixaria\funcoes.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

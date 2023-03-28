@@ -1,78 +1,58 @@
+#include "funcoes.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int opc, cadastrados = 0;
+int opc, i, cadastrados = 0, login_valido = 0;
+char loginuser[100], loginsenha[100];
 
-struct func
-{
-    char user[100];
-    char senha[100];
-    char telefone[12];
-    char email[100];
-    int cod;
-    char CPF[12];
-    char RG[10];
-};
+f *funcionario;
 
+int main() {
+  do {
+    printf("\n=====SOFTWARE GERENCIA DE PEIXARIA=====\n");
+    printf("[1] GERENCIAR FUNCIONARIOS\n");
+    printf("[2] LOGIN NO SISTEMA\n");
+    printf("[3] SAIR\n");
+    scanf("%i", &opc);
+    switch (opc) {
+    case 1:
+      menu_funcionarios(funcionario, &cadastrados);
+      break;
+    case 2:
+      login_valido = 0;
+      if (cadastrados == 0) {
+        printf("\nNenhum usuario cadastrado.");
+        break;
+      } else {
+        printf("Digite o nome de usuario: ");
+        fflush(stdin);
+        gets(loginuser);
+        printf("\nDigite a senha: ");
+        fflush(stdin);
+        gets(loginsenha);
 
-typedef struct func f;
-f *funcionario, aux;
-
-
-int main()
-{
-    do
-    {
-        printf("\n=====SOFTWARE GERENCIA DE PEIXARIA=====\n");
-        printf("[1] CADASTRO DE FUNCIONARIO\n");
-        printf("[2] LOGIN NO SISTEMA\n");
-        printf("[3] SAIR\n");
-        switch (opc)
-        {
-        case 1:
-            if (cadastrados == 0)
-            {
-                funcionario = (f*)malloc(sizeof(f));
-                printf("\nUsuario: ");
-                fflush(stdin);
-                gets(funcionario[0].user);
-                printf("\nSenha: ");
-                fflush(stdin);
-                gets(funcionario[0].senha);
-                printf("\nTelefone (apenas numeros): ");
-                fflush(stdin);
-                gets(funcionario[0].user);
-                printf("\nEmail: ");
-                fflush(stdin);
-                gets(funcionario[0].user);
-                //USAR RANDINT PRA GERAR CODIGO
-                printf("\nUsuario: ");
-                fflush(stdin);
-                gets(funcionario[0].user);
-                printf("\nUsuario: ");
-                fflush(stdin);
-                gets(funcionario[0].user);
-
-
-            } else {
-                funcionario = (f*)realloc(funcionario, (cadastrados+1)*sizeof(f));
-            }
-            cadastrados++;
+        for (i = 0; i < cadastrados; i++) {
+          if (!(strcmp(funcionario[i].user, loginuser)) &&
+              !(strcmp(funcionario[i].senha, loginsenha))) {
+            // login();
+            login_valido = 1;
+            printf("\n=====Bem vindo=====\n");
             break;
-        case 2:
-            if (cadastrados == 0)
-            {
-                printf("\nNenhum usuario cadastrado.");
-                break;
-            }
-            break;
-        case 3:
-            return 0;
-        default:
-            printf("\nOpcao Invalida!");
+          }
         }
+        if (!login_valido) {
+          printf("Email ou senha invalido");
+        }
+      }
+      break;
+
+    case 3:
+      return 0;
+    default:
+      printf("\nOpcao Invalida!");
     }
-    while(1);
-
-
+  } while (1);
+  free(funcionario);
 }
+
