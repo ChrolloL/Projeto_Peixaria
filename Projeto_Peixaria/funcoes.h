@@ -5,80 +5,46 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct venda
-{
-    char produto[100];
-    int qtd;
-    int cod_func;
-    int valor_prod;
-    int valor_total;
-};
 
-struct func
-{
-    char user[100];
-    char senha[100];
-    char telefone[12];
-    char email[100];
-    int cod;
-    char CPF[12];
-    char RG[10];
-};
-
-struct prod
-{
-    char nome[100];
-    int qtd;
-    char estado[30];
-    char local[100];
-    int cod;
-    int preco;
-    char tipo[50];
-};
-
-typedef struct prod p;
-typedef struct func f;
-typedef struct venda v;
-
-void cad_func(int pos, f *func)
+void cad_func(int pos)
 {
     printf("\nUsuario: ");
     fflush(stdin);
-    gets(func[pos].user);
+    gets(funcionario[pos].user);
     printf("\nSenha: ");
     fflush(stdin);
-    gets(func[pos].senha);
+    gets(funcionario[pos].senha);
     printf("\nTelefone (apenas numeros): ");
     fflush(stdin);
-    gets(func[pos].telefone);
+    gets(funcionario[pos].telefone);
     printf("\nEmail: ");
     fflush(stdin);
-    gets(func[pos].email);
-    func[pos].cod = rand() % 30001;
+    gets(funcionario[pos].email);
+    funcionario[pos].cod = rand() % 30001;
     printf("\nCPF: ");
     fflush(stdin);
-    gets(func[pos].CPF);
+    gets(funcionario[pos].CPF);
     printf("\nRG: ");
     fflush(stdin);
-    gets(func[pos].RG);
+    gets(funcionario[pos].RG);
 }
 
-void mostrar_funcionarios(f *func, int cadastrados)
+void mostrar_funcionarios()
 {
     int i;
     for (i = 0; i < cadastrados; i++)
     {
-        printf("\n====%i====\nUsuario: %s", i, func[i].user);
-        printf("\nSenha: %s", func[i].senha);
-        printf("\nTelefone (apenas numeros): %s", func[i].telefone);
-        printf("\nEmail:  %s", func[i].email);
-        printf("\nCodigo: %i", func[i].cod);
-        printf("\nCPF: %s", func[i].CPF);
-        printf("\nRG: %s", func[i].RG);
+        printf("\n====%i====\nUsuario: %s", i, funcionario[i].user);
+        printf("\nSenha: %s", funcionario[i].senha);
+        printf("\nTelefone (apenas numeros): %s", funcionario[i].telefone);
+        printf("\nEmail:  %s", funcionario[i].email);
+        printf("\nCodigo: %i", funcionario[i].cod);
+        printf("\nCPF: %s", funcionario[i].CPF);
+        printf("\nRG: %s", funcionario[i].RG);
     }
 }
 
-void menu_funcionarios(f *func, int *cadastrados)
+void menu_funcionarios()
 {
     do
     {
@@ -93,20 +59,20 @@ void menu_funcionarios(f *func, int *cadastrados)
         switch (opc)
         {
         case 1:
-            if (*cadastrados == 0)
+            if (cadastrados == 0)
             {
-                func = (f *)malloc(sizeof(f));
-                cad_func(0, func);
+                funcionario = (f *)malloc(sizeof(f));
+                cad_func(0);
             }
             else
             {
-                func = (f *)realloc(func, (*cadastrados + 1) * sizeof(f));
-                cad_func(*cadastrados, func);
+                funcionario = (f *)realloc(funcionario, (cadastrados + 1) * sizeof(f));
+                cad_func(cadastrados);
             }
-            (*cadastrados)++;
+            cadastrados++;
             break;
         case 2:
-            if (*cadastrados == 0)
+            if (cadastrados == 0)
             {
                 printf("\nNao ha funcionarios cadastrados!");
                 break;
@@ -114,15 +80,15 @@ void menu_funcionarios(f *func, int *cadastrados)
             }
             printf("\nCodigo do funcionario:");
             scanf("%i", &cod);
-            for (i = 0; i < *cadastrados; i++)
+            for (i = 0; i < cadastrados; i++)
             {
-                if (func[i].cod == cod)
+                if (funcionario[i].cod == cod)
                 {
-                    aux = func[*cadastrados - 1];
-                    func[*cadastrados - 1] = func[i];
-                    func[i] = aux;
-                    func = (f *)realloc(func, (*cadastrados - 1) * sizeof(f));
-                    (*cadastrados)--;
+                    aux = funcionario[cadastrados - 1];
+                    funcionario[cadastrados - 1] = funcionario[i];
+                    funcionario[i] = aux;
+                    funcionario = (f *)realloc(funcionario, (cadastrados - 1) * sizeof(f));
+                    cadastrados--;
                     removeu = 1;
                     break;
                 }
@@ -131,17 +97,21 @@ void menu_funcionarios(f *func, int *cadastrados)
             {
                 printf("\nFuncionario não encontrado.");
             }
+            else
+            {
+                printf("\nFuncionario removido com sucesso!");
+            }
             break;
         case 3:
-            if (*cadastrados == 0)
+            if (cadastrados == 0)
             {
                 printf("\nNao ha funcionarios cadastrados!");
                 break;
-
             }
-            mostrar_funcionarios(func, *cadastrados);
+            mostrar_funcionarios();
             break;
         case 4:
+            system("cls");
             return;
         default:
             printf("\nOpcao Invalida!");
@@ -150,5 +120,62 @@ void menu_funcionarios(f *func, int *cadastrados)
     while(1);
 
 }
+
+
+void menu_sistema()
+{
+    do
+    {
+        int opc, cod, i, removeu = 0;
+        f aux;
+        printf("\n======SISTEMA======\n");
+        printf("[1] GERENCIAR PRODUTOS\n");
+        printf("[2] VENDA\n");
+        printf("[3] RELATORIOS\n");
+        printf("[4] SAIR\n");
+        scanf("%i", &opc);
+        switch (opc)
+        {
+        case 1:
+            system("cls");
+            printf("\n==PERMISSAO DE ADMIN NECESSARIA==");
+            printf("\nLogin:");
+            fflush(stdin);
+            gets(loginuser);
+            printf("\nSenha:");
+            fflush(stdin);
+            gets(loginsenha);
+            if (!(strcmp(loginADM, loginuser)) &&
+                    !(strcmp(senhaADM, loginsenha)))
+            {
+                //system("cls");
+                //menu_estoque();
+                printf("\nMENU - ESTOQUE\n");
+
+            }
+            else
+            {
+                system("cls");
+                printf("Permissao Negada!");
+            }
+            break;
+        case 2:
+
+            break;
+        case 3:
+
+            break;
+        case 4:
+            system("cls");
+            return;
+        default:
+            printf("\nOpcao Invalida!");
+        }
+    }
+    while(1);
+
+}
+
+
 
 #endif // FUNCOES_H_INCLUDED
