@@ -4,8 +4,9 @@
 struct venda
 {
     char produto[100];
+    char forma_pgmt[15];
     int qtd;
-    int cod_func;
+    char nome_func[100];
     int valor_prod;
     int valor_total;
 };
@@ -28,7 +29,7 @@ struct prod
     char estado[30];
     char local[100];
     int cod;
-    int preco;
+    float preco;
     char tipo[50];
 };
 
@@ -36,8 +37,12 @@ typedef struct prod p;
 typedef struct func f;
 typedef struct venda v;
 
-int opc, i, login_valido = 0, cadastrados = 0;
+int opc, i, login_valido = 0, cadastrados = 0, prod_cadastrados = 0;
 char loginuser[100], loginsenha[100], loginADM[] = "admin", senhaADM[] = "coxinha123";
+
 f *funcionario;
+p *produto;
+v *vendas;
+
 
 #endif // VARIAVEIS_H_INCLUDED

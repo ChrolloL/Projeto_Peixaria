@@ -10,8 +10,9 @@ int main()
     {
         printf("\n=====GERENCIA DE PEIXARIA=====\n");
         printf("[1] GERENCIAR FUNCIONARIOS\n");
-        printf("[2] LOGIN NO SISTEMA\n");
-        printf("[3] SAIR\n");
+        printf("[2] GERENCIAR PRODUTOS\n");
+        printf("[3] LOGIN NO SISTEMA\n");
+        printf("[4] SAIR\n");
         scanf("%i", &opc);
         switch (opc)
         {
@@ -37,9 +38,31 @@ int main()
             }
             break;
         case 2:
+            system("cls");
+            printf("\n==PERMISSAO DE ADMIN NECESSARIA==");
+            printf("\nLogin:");
+            fflush(stdin);
+            gets(loginuser);
+            printf("\nSenha:");
+            fflush(stdin);
+            gets(loginsenha);
+            if (!(strcmp(loginADM, loginuser)) &&
+                    !(strcmp(senhaADM, loginsenha)))
+            {
+                system("cls");
+                menu_estoque();
+            }
+            else
+            {
+                system("cls");
+                printf("Permissao Negada!");
+            }
+            break;
+        case 3:
             login_valido = 0;
             if (cadastrados == 0)
             {
+                system("cls");
                 printf("\nNenhum usuario cadastrado.");
                 break;
             }
@@ -58,6 +81,7 @@ int main()
                             !(strcmp(funcionario[i].senha, loginsenha)))
                     {
                         login_valido = 1;
+                        system("cls");
                         menu_sistema();
                         break;
                     }
@@ -69,7 +93,7 @@ int main()
             }
             break;
 
-        case 3:
+        case 4:
             return 0;
         default:
             printf("\nOpcao Invalida!");
@@ -77,5 +101,7 @@ int main()
     }
     while (1);
     free(funcionario);
+    free(produto);
+    free(vendas);
 }
 
