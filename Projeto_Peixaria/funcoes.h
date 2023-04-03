@@ -9,7 +9,7 @@
 //LÊ OS DADOS DE CADASTRO DE UM NOVO USUÁRIO
 void cad_func(int pos, char user[])
 {
-    char cpf[100], telefone[100];
+    char cpf[100], telefone[100], senha[100];
     strcpy(funcionario[pos].user, user);
     do
     {
@@ -19,21 +19,37 @@ void cad_func(int pos, char user[])
         printf("\nCPF (apenas numeros): ");
         fflush(stdin);
         gets(cpf);
-        if ((strlen(cpf) != 11) || (strlen(telefone) != 11))
+        if ((strlen(cpf) != 11) || (strlen(telefone) != 11)) //VALIDA O CPF E O TELEFONE DIGITADO
         {
             system("cls");
             printf("Favor inserir corretamente os dados!");
         }
         else
         {
+            strcpy(funcionario[pos].CPF, cpf);
+            strcpy(funcionario[pos].telefone, telefone);
             break;
         }
     }
     while (1);
 
-    printf("\nSenha: ");
-    fflush(stdin);
-    gets(funcionario[pos].senha);
+    do
+    {
+        printf("\nSenha (minimo 8 digitos):");
+        fflush(stdin);
+        gets(senha);
+        if (strlen(senha) < 8) //VALIDA A SENHA DIGITADA
+        {
+            system("cls");
+            printf("Minimo de 8 digitos na senha!");
+        }
+        else
+        {
+            strcpy(funcionario[pos].senha, senha);
+            break;
+        }
+    }
+    while (1);
 
     printf("\nEmail: ");
     fflush(stdin);
@@ -75,7 +91,7 @@ void mostrar_produtos()
     for (i = 0; i < prod_cadastrados; i++)
     {
         printf("\n============%i============\nNome: %s", i, produto[i].nome);
-        printf("\nQuantidade: %i", produto[i].qtd);
+        printf("\nQuantidade em estoque: %i", produto[i].qtd);
         printf("\nEstado: %s", produto[i].estado);
         printf("\nQuantidade vendida: %i", produto[i].vendas);
         printf("\nCodigo: %i", produto[i].cod);
@@ -202,7 +218,7 @@ void menu_funcionarios()
             if (!removeu)
             {
                 system("cls");
-                printf("Funcionario nao encontrado.");//AVISA CASO NÃO SEJA ENCONTRADO O CÓDIGO NO SISTEMA
+                printf("Codigo invalido ou nao encontrado no sistema!");//AVISA CASO O CÓDIGO SEJA INVÁLIDO OU NÃO SEJA ENCONTRADO
             }
             else
             {
@@ -255,7 +271,7 @@ void menu_estoque()
                 system("cls");
                 cad_produto(0);
             }
-            else //HOUVER PRODUTOS CADASTRADOS, REALOCA ADICIONANDO UMA POSIÇÃO E LÊ OS DADOS DO PRODUTO
+            else //SE HOUVER PRODUTOS CADASTRADOS, REALOCA ADICIONANDO UMA POSIÇÃO E LÊ OS DADOS DO PRODUTO
             {
                 produto = (p *)realloc(produto, (prod_cadastrados + 1) * sizeof(p));
                 system("cls");
@@ -287,13 +303,13 @@ void menu_estoque()
                 }
             }
             system("cls");
-            if (adicionado)//AVISA ADICIONOU O PRODUTO OU SE NÃO ENCONTROU NO SISTEMA
+            if (adicionado)
             {
-                printf("Quantidade adicionada no estoque.");
+                printf("Quantidade adicionada no estoque.");//AVISA SE ADICIONOU O PRODUTO
             }
             else
             {
-                printf("Produto nao encontrado!");
+                printf("Codigo invalido ou nao encontrado no sistema!");//AVISA SE O CÓDIGO É INVÁLIDO OU SE NÃO FOI ENCONTRADO
             }
             break;
         case 3:
@@ -323,13 +339,13 @@ void menu_estoque()
 
             system("cls");
 
-            if (!removeu)//AVISA SE REMOVEU OU SE NÃO ENCONTROU O PRODUTO NO SISTEMA
+            if (!removeu)
             {
-                printf("Produto nao encontrado.");
+                printf("Codigo invalido ou nao encontrado no sistema!");//AVISA SE O CODIGO É INVÁLIDO OU SE NÃO FOI ENCONTRADO
             }
             else
             {
-                printf("Produto removido com sucesso!");
+                printf("Produto removido com sucesso!");//AVISA CASO TENHA REMOVIDO
             }
             break;
         case 4:
@@ -465,10 +481,10 @@ void menu_venda()
             menu_venda();
             return;
         }
+        system("cls");
         do
         {
             //FORMAS DE PAGAMENTO
-            system("cls");
             printf("=====FORMA DE PAGAMENTO=====\n");
             printf("[1] A VISTA\n");
             printf("[2] A PRAZO\n");
@@ -477,12 +493,12 @@ void menu_venda()
             switch (opc)
             {
             case 1:
-                system("cls");
                 printf("[1] PIX\n");
                 printf("[2] CARTAO (CREDITO/DEBITO)\n");
                 printf("[3] DINHEIRO\n");
                 printf("[4] CANCELAR VENDA\n");
                 scanf("%i", &opc);
+                system("cls");
                 switch (opc)
                 {
                 case 1:
@@ -507,7 +523,6 @@ void menu_venda()
                 }
                 break;
             case 2:
-                system("cls");
                 printf("[1] CARTAO DE CREDITO\n");
                 printf("[2] BOLETO\n");
                 printf("[3] CANCELAR VENDA\n");
@@ -546,7 +561,7 @@ void menu_venda()
     else
     {
         system("cls");
-        printf("Produto nao encontrado!");
+        printf("Codigo invalido ou nao encontrado no sistema!");//AVISA SE O CODIGO É INVÁLIDO OU SE NÃO FOI ENCONTRADO
         menu_venda();
         return;
     }
@@ -584,7 +599,7 @@ void menu_relatorios()
             if(!encontrou)
             {
                 system("cls");
-                printf("Funcionario nao encontrado!\n");
+                printf("Codigo invalido ou nao encontrado no sistema!");//AVISA SE O CODIGO É INVÁLIDO OU SE NÃO FOI ENCONTRADO
                 menu_relatorios();
                 return;
             }
@@ -611,12 +626,12 @@ void menu_relatorios()
             if (!encontrou)
             {
                 system("cls");
-                printf("Produto nao encontrado!\n");
+                printf("Codigo invalido ou nao encontrado no sistema!");//AVISA SE O CODIGO É INVÁLIDO OU SE NÃO FOI ENCONTRADO
                 menu_relatorios();
                 return;
             }
             system("cls");
-            //QUANTIDADE QUE FOI VENDIDA DO PRODUTO
+            //QUANTIDADE VENDIDA DO PRODUTO
             printf("Nome do produto: %s", produto[pos].nome);
             printf("\nCodigo do produto: %i", produto[pos].cod);
             printf("\nQuantia vendida: %i", produto[pos].vendas);
@@ -649,7 +664,7 @@ void menu_relatorios()
 
                     printf("\nProduto mais vendido: %s", produto[i].nome);
                     printf("\nCodigo do produto: %i", produto[i].cod);
-                    printf("\nQuantidade vendida: %i", produto[i].vendas);
+                    printf("\nQuantia vendida: %i", produto[i].vendas);
                 }
 
             }
@@ -662,7 +677,7 @@ void menu_relatorios()
                 {
                     printf("\nProduto menos vendido: %s", produto[i].nome);
                     printf("\nCodigo do produto: %i", produto[i].cod);
-                    printf("\nQuantidade vendida: %i", produto[i].vendas);
+                    printf("\nQuantia vendida: %i", produto[i].vendas);
                 }
             }
 
