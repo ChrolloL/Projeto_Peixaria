@@ -5,31 +5,49 @@
 #include <stdlib.h>
 #include <string.h>
 
-void cad_func(int pos)
+
+//LÊ OS DADOS DE CADASTRO DE UM NOVO USUÁRIO
+void cad_func(int pos, char user[])
 {
-    printf("\nUsuario: ");
-    fflush(stdin);
-    gets(funcionario[pos].user);
+    char cpf[100], telefone[100];
+    strcpy(funcionario[pos].user, user);
+    do
+    {
+        printf("\nTelefone (apenas numeros): ");
+        fflush(stdin);
+        gets(telefone);
+        printf("\nCPF (apenas numeros): ");
+        fflush(stdin);
+        gets(cpf);
+        if ((strlen(cpf) != 11) || (strlen(telefone) != 11))
+        {
+            system("cls");
+            printf("Favor inserir corretamente os dados!");
+        }
+        else
+        {
+            break;
+        }
+    }
+    while (1);
+
     printf("\nSenha: ");
     fflush(stdin);
     gets(funcionario[pos].senha);
-    printf("\nTelefone (apenas numeros): ");
-    fflush(stdin);
-    gets(funcionario[pos].telefone);
+
     printf("\nEmail: ");
     fflush(stdin);
     gets(funcionario[pos].email);
     funcionario[pos].cod = rand() % 30001;
-    printf("\nCPF: ");
+    printf("\nNome do funcionario: ");
     fflush(stdin);
-    gets(funcionario[pos].CPF);
-    printf("\nRG: ");
-    fflush(stdin);
-    gets(funcionario[pos].RG);
+    gets(funcionario[pos].nome);
     funcionario[pos].vendas_func = 0;
     system("cls");
 }
 
+
+//LÊ OS DADOS DE CADASTRO DE UM NOVO PRODUTO
 void cad_produto(int pos)
 {
     produto[pos].qtd = 0;
@@ -49,60 +67,64 @@ void cad_produto(int pos)
     system("cls");
 }
 
+
+//MOSTRA OS PRODUTOS CADASTRADOS
 void mostrar_produtos()
 {
     int i;
     for (i = 0; i < prod_cadastrados; i++)
     {
-        printf("\n====%i====\nNome: %s", i, produto[i].nome);
+        printf("\n============%i============\nNome: %s", i, produto[i].nome);
         printf("\nQuantidade: %i", produto[i].qtd);
         printf("\nEstado: %s", produto[i].estado);
-        printf("\nQuantidade vendida:  %i", produto[i].vendas);
+        printf("\nQuantidade vendida: %i", produto[i].vendas);
         printf("\nCodigo: %i", produto[i].cod);
-        printf("\nPreco: R$ %f", produto[i].preco);
+        printf("\nPreco: R$ %.2f", produto[i].preco);
         printf("\nTipo: %s", produto[i].tipo);
     }
 }
 
-
+//MOSTRA O REGISTRO DE VENDAS FEITAS
 void mostrar_vendas()
 {
     int i;
     for (i = 0; i < num_vendas; i++)
     {
-        printf("\n==============\nProduto: %s", vendas[i].produto);
+        printf("\n=========================\nProduto: %s", vendas[i].produto);
         printf("\nCodigo: %i", vendas[i].cod_produto);
         printf("\nForma de pagamento: %s", vendas[i].forma_pgmt);
         printf("\nQuantidade: %i", vendas[i].qtd);
         printf("\nFuncionario: %s", vendas[i].nome_func);
         printf("\nCod. Funcionario: %i", vendas[i].cod_func);
-        printf("\nValor do produto: %f", vendas[i].valor_prod);
-        printf("\nValor total: %f", vendas[i].valor_total);
+        printf("\nValor do produto: R$ %.2f", vendas[i].valor_prod);
+        printf("\nValor total: R$ %.2f", vendas[i].valor_total);
     }
 }
 
 
-
+//MOSTRA OS FUNCIONARIOS CADASTRADOS
 void mostrar_funcionarios()
 {
     int i;
     for (i = 0; i < cadastrados; i++)
     {
-        printf("\n====%i====\nUsuario: %s", i, funcionario[i].user);
+        printf("\n============%i============\nUsername: %s", i, funcionario[i].user);
         printf("\nSenha: %s", funcionario[i].senha);
+        printf("\nNome do funcionario: %s", funcionario[i].nome);
         printf("\nTelefone : %s", funcionario[i].telefone);
         printf("\nEmail:  %s", funcionario[i].email);
         printf("\nCodigo: %i", funcionario[i].cod);
         printf("\nCPF: %s", funcionario[i].CPF);
-        printf("\nRG: %s", funcionario[i].RG);
     }
 }
 
+//MENU DA ÁREA DE FUNCIONÁRIOS
 void menu_funcionarios()
 {
     do
     {
-        int opc, cod, i, removeu = 0;
+        int opc, cod, i, removeu = 0, invalido = 0;
+        char user[50];
         f aux;
         printf("\n====GERENCIAR FUNCIONARIOS====\n");
         printf("[1] ADICIONAR FUNCIONARIO\n");
@@ -113,36 +135,65 @@ void menu_funcionarios()
         switch (opc)
         {
         case 1:
+            //SE NÃO HOUVER FUNCIONÁRIOS CADASTRADOS, ALOCA MEMÓRIA E LÊ OS DADOS DE CADASTRO
             if (cadastrados == 0)
             {
                 funcionario = (f *)malloc(sizeof(f));
-                cad_func(0);
+                system("cls");
+                printf("Username do funcionario:");
+                fflush(stdin);
+                gets(user);
+                cad_func(0, user);
             }
             else
             {
+                //SE JÁ HOUVEREM FUNCIONÁRIOS CADASTRADOS, VERIFICA O USERNAME DIGITADO PARA QUE NÃO
+                //HAJAM USERNAMES REPETIDOS, AFINAL AS VENDAS SERÃO ASSOCIADAS AO USERNAME QUE FEZ LOGIN
+                system("cls");
+                printf("Username do funcionario:");
+                fflush(stdin);
+                gets(user);
+                for (i = 0; i < cadastrados; i++)
+                {
+                    if (!(strcmp(user, funcionario[i].user)))//SE O USERNAME FOR REPETIDO, AVISA E PEDE PARA ESCOLHER OUTRO
+                    {
+                        system("cls");
+                        printf("Nome de usuario ja esta em uso. Favor escolher outro!");
+                        invalido = 1;
+                        break;
+                    }
+                }
+                if (invalido)
+                {
+                    break;
+                }
+                //SE O USERNAME FOR VÁLIDO, REALOCA MEMÓRIA E LÊ OS DADOS DE CADASTRO
                 funcionario = (f *)realloc(funcionario, (cadastrados + 1) * sizeof(f));
-                cad_func(cadastrados);
+                cad_func(cadastrados, user);
             }
-            cadastrados++;
+            cadastrados++;//CONTROLE DE FUNCIONÁRIOS CADASTRADOS
             system("cls");
             break;
         case 2:
-            if (cadastrados == 0)
+            if (cadastrados == 0)//SE NÃO HOUVER FUNCIONÁRIOS CADASTRADOS, AVISA E VOLTA AO MENU
             {
                 system("cls");
-                printf("\nNao ha funcionarios cadastrados!");
+                printf("Nao ha funcionarios cadastrados!");
                 break;
             }
-            printf("\nCodigo do funcionario:");
+            system("cls");
+            printf("Codigo do funcionario:");
             scanf("%i", &cod);
+            //ENCONTRA O FUNCIONÁRIO NO SISTEMA
             for (i = 0; i < cadastrados; i++)
             {
-                if (funcionario[i].cod == cod)
+                if (funcionario[i].cod == cod)//SE ENCONTROU, REALIZA O PROCESSO DE REMOÇÃO
                 {
-                    aux = funcionario[cadastrados - 1];
-                    funcionario[cadastrados - 1] = funcionario[i];
-                    funcionario[i] = aux;
-                    funcionario = (f *)realloc(funcionario, (cadastrados - 1) * sizeof(f));
+
+                    aux = funcionario[cadastrados - 1];//JOGA O ÚLTIMO FUNCIONÁRIO CADASTRADO PARA UMA AUXILIAR
+                    funcionario[cadastrados - 1] = funcionario[i];//JOGA O FUNCIONÁRIO A SER REMOVIDO PARA A ÚLTIMA POSIÇÃO
+                    funcionario[i] = aux;//AUXILIAR VAI PARA O LOCAL ONDE ESTAVA O QUE SERÁ REMOVIDO
+                    funcionario = (f *)realloc(funcionario, (cadastrados - 1) * sizeof(f));//REALOCA MEMÓRIA, REMOVENDO A ÚLTIMA POSIÇÃO
                     cadastrados--;
                     removeu = 1;
                     break;
@@ -151,21 +202,22 @@ void menu_funcionarios()
             if (!removeu)
             {
                 system("cls");
-                printf("\nFuncionario nao encontrado.");
+                printf("Funcionario nao encontrado.");//AVISA CASO NÃO SEJA ENCONTRADO O CÓDIGO NO SISTEMA
             }
             else
             {
                 system("cls");
-                printf("\nFuncionario removido com sucesso!");
+                printf("Funcionario removido com sucesso!");//AVISA SE A REMOÇÃO FOI BEM SUCEDIDA
             }
             break;
         case 3:
-            if (cadastrados == 0)
+            if (cadastrados == 0)//SE NÃO HOUVER FUNCIONÁRIOS CADASTRADOS, AVISA E VOLTA AO MENU
             {
                 system("cls");
-                printf("\nNao ha funcionarios cadastrados!");
+                printf("Nao ha funcionarios cadastrados!");
                 break;
             }
+            system("cls");
             mostrar_funcionarios();
             break;
         case 4:
@@ -173,12 +225,14 @@ void menu_funcionarios()
             return;
         default:
             system("cls");
-            printf("\nOpcao Invalida!");
+            printf("Opcao Invalida!");
         }
     }
     while (1);
 }
 
+
+//MENU DE GERÊNCIA DOS PRODUTOS
 void menu_estoque()
 {
     do
@@ -195,33 +249,37 @@ void menu_estoque()
         switch (opc)
         {
         case 1:
-            if (prod_cadastrados == 0)
+            if (prod_cadastrados == 0)//SE NÃO HOUVER PRODUTOS CADASTRADOS, ALOCA UMA POSIÇÃO E LÊ OS DADOS DO PRODUTO
             {
                 produto = (p *)malloc(sizeof(p));
+                system("cls");
                 cad_produto(0);
             }
-            else
+            else //HOUVER PRODUTOS CADASTRADOS, REALOCA ADICIONANDO UMA POSIÇÃO E LÊ OS DADOS DO PRODUTO
             {
                 produto = (p *)realloc(produto, (prod_cadastrados + 1) * sizeof(p));
+                system("cls");
                 cad_produto(prod_cadastrados);
             }
             prod_cadastrados++;
             system("cls");
             break;
         case 2:
-            if (prod_cadastrados == 0)
+            if (prod_cadastrados == 0)//SE NÃO HOUVER PRODUTOS CADASTRADOS, AVISA E RETORNA AO MENU
             {
                 system("cls");
-                printf("\nNao ha produtos cadastrados!");
+                printf("Nao ha produtos cadastrados!");
                 break;
             }
+            system("cls");
             printf("Codigo do produto:");
             scanf("%i", &cod);
             printf("Quantidade:");
             scanf("%i", &qtd);
+            //PROCURA O PRODUTO NO SISTEMA
             for (i = 0; i < prod_cadastrados; i++)
             {
-                if (produto[i].cod == cod)
+                if (produto[i].cod == cod) //SE ENCONTROU, ADICIONA A QUANTIDADE AO ESTOQUE
                 {
                     produto[i].qtd += qtd;
                     adicionado = 1;
@@ -229,24 +287,26 @@ void menu_estoque()
                 }
             }
             system("cls");
-            if (adicionado)
+            if (adicionado)//AVISA ADICIONOU O PRODUTO OU SE NÃO ENCONTROU NO SISTEMA
             {
-                printf("\nQuantidade adicionada no estoque.");
+                printf("Quantidade adicionada no estoque.");
             }
             else
             {
-                printf("\nProduto nao encontrado!");
+                printf("Produto nao encontrado!");
             }
             break;
         case 3:
-            if (prod_cadastrados == 0)
+            if (prod_cadastrados == 0)//SE NÃO HOUVER PRODUTOS CADASTRADOS, AVISA E RETORNA AO MENU
             {
                 system("cls");
-                printf("\nNao ha produtos cadastrados!");
+                printf("Nao ha produtos cadastrados!");
                 break;
             }
+            system("cls");
             printf("Codigo do produto:");
             scanf("%i", &cod);
+            //AQUI É O MESMO PROCESSO FEITO PARA REMOVER O CADASTRO DOS FUNCIONÁRIOS DO SISTEMA
             for (i = 0; i < prod_cadastrados; i++)
             {
                 if (produto[i].cod == cod)
@@ -263,22 +323,23 @@ void menu_estoque()
 
             system("cls");
 
-            if (!removeu)
+            if (!removeu)//AVISA SE REMOVEU OU SE NÃO ENCONTROU O PRODUTO NO SISTEMA
             {
-                printf("\nProduto nao encontrado.");
+                printf("Produto nao encontrado.");
             }
             else
             {
-                printf("\nProduto removido com sucesso!");
+                printf("Produto removido com sucesso!");
             }
             break;
         case 4:
-            if (prod_cadastrados == 0)
+            if (prod_cadastrados == 0)//SE NÃO HOUVER PRODUTOS CADASTRADOS, AVISA E RETORNA AO MENU
             {
                 system("cls");
-                printf("\nNao ha produtos cadastrados!");
+                printf("Nao ha produtos cadastrados!");
                 break;
             }
+            system("cls");
             mostrar_produtos();
             break;
         case 5:
@@ -286,37 +347,32 @@ void menu_estoque()
             return;
         default:
             system("cls");
-            printf("\nOpcao Invalida!");
+            printf("Opcao Invalida!");
         }
     }
     while (1);
 }
 
+//FUNÇÃO PARA ADICIONAR A VENDA NO REGISTRO DE VENDAS FEITAS
 void concluir_venda(char forma_pgmt[], int pos, int qtd, int A_VISTA)
 {
-    int i, cod_func, encontrou = 0;
-    printf("\nPara confirmar a venda, entre com seu codigo de funcionario (-1 para sair):");
-    scanf("%i", &cod_func);
-    if (cod_func == -1)
-    {
-        system("cls");
-        return;
-    }
-    if (num_vendas == 0)
+    int i;
+    if (num_vendas == 0)//SE AINDA NÃO HOUVER VENDAS, SERÁ ALOCADA UMA POSIÇÃO DE MEMÓRIA
     {
         for (i = 0; i < cadastrados; i++)
         {
-            if (funcionario[i].cod == cod_func)
+            if (!(strcmp(funcionario[i].user, loginuser)))//VERIFICA QUAL É O FUNCIONÁRIO QUE FEZ LOGIN
             {
                 vendas = (v *)malloc(sizeof(v));
+                //ADICIONA OS DADOS NA STRUCT VENDAS
                 strcpy(vendas[num_vendas].produto, produto[pos].nome);
                 strcpy(vendas[num_vendas].forma_pgmt, forma_pgmt);
                 vendas[num_vendas].cod_produto = produto[pos].cod;
                 vendas[num_vendas].qtd = qtd;
-                strcpy(vendas[num_vendas].nome_func, funcionario[i].user);
-                vendas[num_vendas].cod_func = cod_func;
+                strcpy(vendas[num_vendas].nome_func, funcionario[i].nome);
+                vendas[num_vendas].cod_func = funcionario[i].cod;
                 vendas[num_vendas].valor_prod = produto[pos].preco;
-                if (A_VISTA)
+                if (A_VISTA) //SE FOR A VISTA, DESCONTA 10% DO VALOR FINAL
                 {
                     vendas[num_vendas].valor_total = (produto[pos].preco * qtd) - (produto[pos].preco * qtd)*0.10;
                 }
@@ -324,26 +380,31 @@ void concluir_venda(char forma_pgmt[], int pos, int qtd, int A_VISTA)
                 {
                     vendas[num_vendas].valor_total = produto[pos].preco * qtd;
                 }
-                encontrou = 1;
+                //ATUALIZA OS DADOS DE CONTROLE
                 num_vendas++;
                 funcionario[i].vendas_func++;
-                break;
+                produto[pos].vendas += qtd;
+                produto[pos].qtd -= qtd;
+                system("cls");
+                //CONFIRMA A VENDA NA TELA
+                printf("VENDA REALIZADA COM SUCESSO\n");
+                return;
             }
         }
     }
-    else
+    else //AQUI É A MESMA COISA, PORÉM É REALOCADA A MEMÓRIA PARA ADICIONAR MAIS UMA POSIÇÃO NA STRUCT VENDAS
     {
         for (i = 0; i < cadastrados; i++)
         {
-            if (funcionario[i].cod == cod_func)
+            if (!(strcmp(funcionario[i].user, loginuser)))
             {
                 vendas = (v *)realloc(vendas, (num_vendas + 1) * sizeof(v));
                 strcpy(vendas[num_vendas].produto, produto[pos].nome);
                 strcpy(vendas[num_vendas].forma_pgmt, forma_pgmt);
                 vendas[num_vendas].cod_produto = produto[pos].cod;
                 vendas[num_vendas].qtd = qtd;
-                strcpy(vendas[num_vendas].nome_func, funcionario[i].user);
-                vendas[num_vendas].cod_func = cod_func;
+                strcpy(vendas[num_vendas].nome_func, funcionario[i].nome);
+                vendas[num_vendas].cod_func = funcionario[i].cod;
                 vendas[num_vendas].valor_prod = produto[pos].preco;
                 if (A_VISTA)
                 {
@@ -353,24 +414,22 @@ void concluir_venda(char forma_pgmt[], int pos, int qtd, int A_VISTA)
                 {
                     vendas[num_vendas].valor_total = produto[pos].preco * qtd;
                 }
-                encontrou = 1;
                 num_vendas++;
                 funcionario[i].vendas_func++;
-                break;
+                produto[pos].vendas += qtd;
+                produto[pos].qtd -= qtd;
+                system("cls");
+                printf("VENDA REALIZADA COM SUCESSO\n");
+                return;
             }
         }
     }
-    if (!encontrou)
-    {
-        system("cls");
-        printf("Codigo nao encontrado no sistema!");
-        concluir_venda(forma_pgmt, pos, qtd, A_VISTA);
-    }
 }
 
+//MENU DE VENDA
 void menu_venda()
 {
-    if (prod_cadastrados == 0)
+    if (prod_cadastrados == 0)//SE NÃO HOUVER PRODUTOS CADASTRADOS NÃO PERMITE A VENDA
     {
         system("cls");
         printf("Nenhum produto cadastrado no sistema!");
@@ -379,7 +438,7 @@ void menu_venda()
     int cod, i, encontrou = 0, opc, pos, qtdv;
     printf("\nCodigo do produto (-1 para sair):");
     scanf("%i", &cod);
-    if (cod == -1)
+    if (cod == -1)//SE DIGITAR -1 SAI DA VENDA
     {
         system("cls");
         return;
@@ -395,19 +454,22 @@ void menu_venda()
     }
     if (encontrou)
     {
-        printf("\nQuantidade:");
+        system("cls");
+        printf("Quantidade:");
         scanf("%i", &qtdv);
 
-        if (produto[pos].qtd < qtdv)
+        if ((produto[pos].qtd < qtdv) || (qtdv < 1))//VERIFICA SE A QUANTIDADE EXISTE EM ESTOQUE OU SE ELA É VÁLIDA
         {
             system("cls");
-            printf("\nQuantidade insuficiente em estoque!");
+            printf("Quantidade invalida ou insuficiente em estoque!");
             menu_venda();
+            return;
         }
         do
         {
+            //FORMAS DE PAGAMENTO
             system("cls");
-            printf("\n=====FORMA DE PAGAMENTO=====\n");
+            printf("=====FORMA DE PAGAMENTO=====\n");
             printf("[1] A VISTA\n");
             printf("[2] A PRAZO\n");
             printf("[3] CANCELAR VENDA\n");
@@ -415,7 +477,8 @@ void menu_venda()
             switch (opc)
             {
             case 1:
-                printf("\n[1] PIX\n");
+                system("cls");
+                printf("[1] PIX\n");
                 printf("[2] CARTAO (CREDITO/DEBITO)\n");
                 printf("[3] DINHEIRO\n");
                 printf("[4] CANCELAR VENDA\n");
@@ -423,50 +486,41 @@ void menu_venda()
                 switch (opc)
                 {
                 case 1:
-                    concluir_venda("PIX", pos, qtdv, 1);
                     system("cls");
-                    printf("\nVENDA REALIZADA COM SUCESSO\n");
-                    produto[pos].vendas += qtdv;
+                    concluir_venda("A VISTA - PIX", pos, qtdv, 1);
                     return;
                 case 2:
-                    concluir_venda("CARTAO", pos, qtdv, 1);
                     system("cls");
-                    printf("\nVENDA REALIZADA COM SUCESSO\n");
-                    produto[pos].vendas += qtdv;
+                    concluir_venda("A VISTA - CARTAO", pos, qtdv, 1);
                     return;
                 case 3:
-                    concluir_venda("DINHEIRO", pos, qtdv, 1);
                     system("cls");
-                    printf("\nVENDA REALIZADA COM SUCESSO\n");
-                    produto[pos].vendas += qtdv;
+                    concluir_venda("A VISTA - DINHEIRO", pos, qtdv, 1);
                     return;
                 case 4:
                     system("cls");
                     return;
                 default:
                     system("cls");
-                    printf("\nOpcao Invalida!");
+                    printf("Opcao Invalida!");
                     break;
                 }
                 break;
             case 2:
-                printf("\n[1] CARTAO DE CREDITO\n");
+                system("cls");
+                printf("[1] CARTAO DE CREDITO\n");
                 printf("[2] BOLETO\n");
                 printf("[3] CANCELAR VENDA\n");
                 scanf("%i", &opc);
                 switch (opc)
                 {
                 case 1:
-                    concluir_venda("CARTAO DE CREDITO", pos, qtdv, 0);
                     system("cls");
-                    printf("\nVENDA REALIZADA COM SUCESSO\n");
-                    produto[pos].vendas += qtdv;
+                    concluir_venda("A PRAZO - CARTAO DE CREDITO", pos, qtdv, 0);
                     return;
                 case 2:
-                    concluir_venda("BOLETO", pos, qtdv, 0);
                     system("cls");
-                    printf("\nVENDA REALIZADA COM SUCESSO\n");
-                    produto[pos].vendas += qtdv;
+                    concluir_venda("A PRAZO - BOLETO", pos, qtdv, 0);
                     return;
                 case 3:
                     system("cls");
@@ -478,9 +532,11 @@ void menu_venda()
                 }
                 break;
             case 3:
+                system("cls");
                 return;
             default:
-                printf("\nOpcao Invalida!");
+                system("cls");
+                printf("Opcao Invalida!");
                 break;
             }
         }
@@ -490,11 +546,13 @@ void menu_venda()
     else
     {
         system("cls");
-        printf("\nProduto nao encontrado!");
+        printf("Produto nao encontrado!");
         menu_venda();
+        return;
     }
 };
 
+//MENU DE RELATÓRIOS
 void menu_relatorios()
 {
     do
@@ -505,13 +563,14 @@ void menu_relatorios()
         printf("[1] VENDAS POR FUNCIONARIO\n");
         printf("[2] VENDAS POR PRODUTO\n");
         printf("[3] INFORMACOES GERAIS\n");
-        printf("[4] RELATORIO DE VENDAS FEITAS\n");
+        printf("[4] REGISTRO DE VENDAS FEITAS\n");
         printf("[5] SAIR\n");
         scanf("%i", &opc);
         switch (opc)
         {
         case 1:
-            printf("\nCodigo do funcionario: ");
+            system("cls");
+            printf("Codigo do funcionario: ");
             scanf("%i", &cod);
             for (i = 0; i < cadastrados; i++)
             {
@@ -525,16 +584,19 @@ void menu_relatorios()
             if(!encontrou)
             {
                 system("cls");
-                printf("\nFuncionario nao encontrado!\n");
+                printf("Funcionario nao encontrado!\n");
                 menu_relatorios();
+                return;
             }
             system("cls");
-            printf("\nNome do funcionario: %s", funcionario[pos].user);
+            //QUANTIDADE DE VENDAS QUE O FUNCIONÁRIO FEZ
+            printf("Nome do funcionario: %s", funcionario[pos].nome);
             printf("\nCodigo do funcionario: %i", funcionario[pos].cod);
             printf("\nVendas feitas: %i", funcionario[pos].vendas_func);
             break;
         case 2:
-            printf("\nCodigo do produto: ");
+            system("cls");
+            printf("Codigo do produto: ");
             scanf("%i", &cod_produto);
             for (i = 0; i < prod_cadastrados; i++)
             {
@@ -549,16 +611,19 @@ void menu_relatorios()
             if (!encontrou)
             {
                 system("cls");
-                printf("\nProduto nao encontrado!\n");
+                printf("Produto nao encontrado!\n");
                 menu_relatorios();
+                return;
             }
             system("cls");
-            printf("\nNome do produto: %s", produto[pos].nome);
+            //QUANTIDADE QUE FOI VENDIDA DO PRODUTO
+            printf("Nome do produto: %s", produto[pos].nome);
             printf("\nCodigo do produto: %i", produto[pos].cod);
             printf("\nQuantia vendida: %i", produto[pos].vendas);
             break;
         case 3:
-
+            system("cls");
+            //ENCONTRA OS PRODUTO MAIS VENDIDO E O MENOS VENDIDO
             mais_vendido = produto[0].vendas;
             menos_vendido = produto[0].vendas;
             for (i = 1; i < prod_cadastrados; i++)
@@ -575,7 +640,7 @@ void menu_relatorios()
                     menos_vendido = produto[i].vendas;
                 }
             }
-            printf("\n===========================================\n");
+            printf("\n===========================================");
 
             for (i = 0; i < prod_cadastrados; i++)
             {
@@ -589,7 +654,7 @@ void menu_relatorios()
 
             }
 
-            printf("\n=======================\n");
+            printf("\n=======================");
 
             for (i = 0; i < prod_cadastrados; i++)
             {
@@ -601,6 +666,8 @@ void menu_relatorios()
                 }
             }
 
+
+            //ENCONTRA O PRODUTO MAIS CARO E O MAIS BARATO
             caro = produto[0].preco;
             barato = produto[0].preco;
 
@@ -618,7 +685,7 @@ void menu_relatorios()
                     barato = produto[i].preco;
                 }
             }
-            printf("\n=======================\n");
+            printf("\n=======================");
 
             for (i = 0; i < prod_cadastrados; i++)
             {
@@ -626,11 +693,11 @@ void menu_relatorios()
                 {
                     printf("\nProduto mais caro: %s", produto[i].nome);
                     printf("\nCodigo do produto: %i", produto[i].cod);
-                    printf("\nPreco do produto: %f", produto[i].preco);
+                    printf("\nPreco do produto: R$ %.2f", produto[i].preco);
                 }
             }
 
-            printf("\n=======================\n");
+            printf("\n=======================");
 
             for (i = 0; i < prod_cadastrados; i++)
             {
@@ -638,11 +705,13 @@ void menu_relatorios()
                 {
                     printf("\nProduto mais barato: %s", produto[i].nome);
                     printf("\nCodigo do produto: %i", produto[i].cod);
-                    printf("\nPreco do produto: %f", produto[i].preco);
+                    printf("\nPreco do produto: R$ %.2f", produto[i].preco);
                 }
             }
-            printf("\n=======================\n");
+            printf("\n=======================");
 
+
+            //ENCONTRA O FUNCIONÁRIO COM MAIOR E MENOR NÚMERO DE VENDAS
             mais_vendas = funcionario[0].vendas_func;
             menos_vendas = funcionario[0].vendas_func;
             for (i = 1; i < cadastrados; i++)
@@ -664,30 +733,31 @@ void menu_relatorios()
             {
                 if (funcionario[i].vendas_func == mais_vendas)
                 {
-                    printf("\nFuncionario com mais vendas: %s", funcionario[i].user);
+                    printf("\nFuncionario com mais vendas: %s", funcionario[i].nome);
                     printf("\nCodigo do funcionario: %i", funcionario[i].cod);
                     printf("\nVendas feitas: %i", funcionario[i].vendas_func);
                 }
             }
 
-            printf("\n=======================\n");
+            printf("\n=======================");
 
             for (i = 0; i < cadastrados; i++)
             {
                 if (funcionario[i].vendas_func == menos_vendas)
                 {
-                    printf("\nFuncionario com menos vendas: %s", funcionario[i].user);
+                    printf("\nFuncionario com menos vendas: %s", funcionario[i].nome);
                     printf("\nCodigo do funcionario: %i", funcionario[i].cod);
                     printf("\nVendas feitas: %i", funcionario[i].vendas_func);
                 }
             }
 
+            //FAZ A MÉDIA DO PREÇO DOS PRODUTOS
             for (i = 0; i < prod_cadastrados; i++)
             {
                 soma+=produto[i].preco;
             }
-            printf("\n=======================\n");
-            printf("\nMedia do preco dos produtos: %f", (soma/prod_cadastrados));
+            printf("\n=======================");
+            printf("\nMedia do preco dos produtos: R$ %.2f", (soma/prod_cadastrados));
             printf("\n===========================================\n");
             break;
         case 4:
@@ -699,21 +769,22 @@ void menu_relatorios()
             return;
         default:
             system("cls");
-            printf("\nOpcao Invalida!");
+            printf("Opcao Invalida!");
+            break;
         }
     }
     while (1);
 }
 
+//MENU ONDE O FUNCIONÁRIO PODE REALIZAR VENDAS
 void menu_sistema()
 {
     do
     {
         int opc;
         printf("\n========SISTEMA========\n");
-        printf("[1] VENDA\n");
-        printf("[2] RELATORIOS\n");
-        printf("[3] SAIR\n");
+        printf("[1] VENDER\n");
+        printf("[2] SAIR\n");
         scanf("%i", &opc);
         switch (opc)
         {
@@ -723,19 +794,11 @@ void menu_sistema()
             break;
         case 2:
             system("cls");
-            if (num_vendas < 5)
-            {
-                printf("Realize no minimo 5 vendas para gerar relatorios.");
-                break;
-            }
-            menu_relatorios();
-            break;
-        case 3:
-            system("cls");
             return;
         default:
             system("cls");
-            printf("\nOpcao Invalida!");
+            printf("Opcao Invalida!");
+            break;
         }
     }
     while (1);
