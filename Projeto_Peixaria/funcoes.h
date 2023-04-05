@@ -163,8 +163,8 @@ void menu_funcionarios()
             }
             else
             {
-                //SE JÁ HOUVEREM FUNCIONÁRIOS CADASTRADOS, VERIFICA O USERNAME DIGITADO PARA QUE NÃO
-                //HAJAM USERNAMES REPETIDOS, AFINAL AS VENDAS SERÃO ASSOCIADAS AO USERNAME QUE FEZ LOGIN
+                /*SE JÁ HOUVEREM FUNCIONÁRIOS CADASTRADOS, VERIFICA O USERNAME DIGITADO PARA QUE NÃO
+                HAJAM USERNAMES REPETIDOS, AFINAL AS VENDAS SERÃO ASSOCIADAS AO USERNAME QUE FEZ LOGIN*/
                 system("cls");
                 printf("Username do funcionario:");
                 fflush(stdin);
@@ -518,7 +518,7 @@ void menu_venda()
                     return;
                 default:
                     system("cls");
-                    printf("Opcao Invalida!");
+                    printf("Opcao Invalida!\n");
                     break;
                 }
                 break;
@@ -542,7 +542,7 @@ void menu_venda()
                     return;
                 default:
                     system("cls");
-                    printf("\nOpcao Invalida!");
+                    printf("Opcao Invalida!\n");
                     break;
                 }
                 break;
@@ -551,7 +551,7 @@ void menu_venda()
                 return;
             default:
                 system("cls");
-                printf("Opcao Invalida!");
+                printf("Opcao Invalida!\n");
                 break;
             }
         }
