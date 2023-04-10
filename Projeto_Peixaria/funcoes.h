@@ -292,6 +292,11 @@ void menu_estoque()
             scanf("%i", &cod);
             printf("Quantidade:");
             scanf("%i", &qtd);
+            if (qtd < 1) {
+                system("cls");
+                printf("Quantidade invalida!");//AVISA SE A QUANTIDADE FOR INVÁLIDA
+                break;
+            }
             //PROCURA O PRODUTO NO SISTEMA
             for (i = 0; i < prod_cadastrados; i++)
             {
